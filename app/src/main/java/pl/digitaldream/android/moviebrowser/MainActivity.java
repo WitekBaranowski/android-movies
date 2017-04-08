@@ -2,7 +2,6 @@ package pl.digitaldream.android.moviebrowser;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,8 +13,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.Collections;
-import java.util.List;
+import pl.digitaldream.android.moviebrowser.model.Movie;
+import pl.digitaldream.android.moviebrowser.model.MovieResponse;
+import pl.digitaldream.android.moviebrowser.tasks.FetchMoviesTask;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
@@ -27,6 +27,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private ProgressBar mLoadingIndicator;
 
+    private EndlessRecyclerViewScrollListener reviewsScrollListener;
+
+    private MovieOrder movieOrder = MovieOrder.POPULAR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +50,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-        fetchMovies(MovieOrder.POPULAR);
+        reviewsScrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                fetchMovies(movieOrder, page+1);
+            }
+        };
+        mRecyclerView.addOnScrollListener(reviewsScrollListener);
+
+       fetchMovies(movieOrder, 1);
     }
 
-    private void fetchMovies(MovieOrder order) {
-        new FetchMoviesTask().execute(order);
+    private void fetchMovies(MovieOrder order, int page) {
+        new FetchMoviesTask(this).execute(String.valueOf(order), String.valueOf(page));
 
     }
 
@@ -62,34 +73,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         Intent movieDetailsIntent = new Intent(context, destinationClass);
         movieDetailsIntent.putExtra(Movie.MOVIE_DETAILS_DATA, movie);
         startActivity(movieDetailsIntent);
-    }
-
-    public class FetchMoviesTask extends AsyncTask<MovieOrder, Void, List<Movie>> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected List<Movie> doInBackground(MovieOrder... params) {
-            if (params.length == 0) {
-                return Collections.emptyList();
-            }
-            return MoviesDownloader.getInstance().fetchMovies(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(List<Movie> movies) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (!movies.isEmpty()) {
-                showMovieDataView();
-                mMovieAdapter.setMovieData(movies);
-            } else {
-                showErrorMessage();
-            }
-        }
     }
 
     @Override
@@ -104,25 +87,41 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         int id = item.getItemId();
 
         if (id == R.id.action_order_popular) {
-            fetchMovies(MovieOrder.POPULAR);
+            mMovieAdapter.reset();
+            reviewsScrollListener.resetState();
+            fetchMovies(MovieOrder.POPULAR, 1);
             return true;
         }
 
         if (id == R.id.action_order_top_rated) {
-            fetchMovies(MovieOrder.TOP_RATED);
+            mMovieAdapter.reset();
+            reviewsScrollListener.resetState();
+            fetchMovies(MovieOrder.TOP_RATED, 1);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void showMovieDataView() {
+    public void showMovieDataView() {
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
-    private void showErrorMessage() {
+    public void showLoader() {
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+    }
+
+    public void showErrorMessage() {
         mRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
+    }
+
+    public void hideLoader() {
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+    }
+
+    public void handleResponse(MovieResponse response) {
+        mMovieAdapter.addMovies(response.getResults());
     }
 }

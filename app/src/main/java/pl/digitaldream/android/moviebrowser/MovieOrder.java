@@ -4,7 +4,7 @@ package pl.digitaldream.android.moviebrowser;
  * Created by wbaranowski on 27.03.2017.
  */
 
-enum MovieOrder {
+public enum MovieOrder {
     POPULAR("popular"),
     TOP_RATED("top_rated");
 

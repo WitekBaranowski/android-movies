@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -17,7 +18,7 @@
             android:paddingBottom="20dp"
             android:paddingLeft="20dp"
             android:paddingTop="20dp"
-            android:text="Title"
+            tools:text="Title"
             android:textColor="@android:color/white"
             android:textSize="45sp" />
 
@@ -26,8 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="5dp"
-            android:orientation="vertical"
-            tools:context="pl.digitaldream.android.moviebrowser.MovieDetailsActivity">
+            android:orientation="vertical">
 
 
             <LinearLayout
@@ -55,7 +55,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
                         android:padding="2dp"
-                        android:text="Release date"
+                        tools:text="Release date"
                         android:textSize="20sp" />
 
                     <TextView
@@ -64,7 +64,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
                         android:padding="2dp"
-                        android:text="Rating"
+                        tools:text="Rating"
                         android:textSize="15sp" />
 
                 </LinearLayout>
@@ -76,8 +76,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"
-                android:text="Overview"
+                tools:text="Overview"
                 android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_video_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/video_label"
+                android:textSize="12sp" />
+
+            <com.synnapps.carouselview.CarouselView
+                android:id="@+id/cv_videos"
+                android:layout_width="320dp"
+                android:layout_height="180dp"
+                android:layout_marginTop="10dp"
+                app:fillColor="#FFFFFFFF"
+                app:pageColor="#00000000"
+                app:radius="6dp"
+                app:slideInterval="3000"
+                app:strokeColor="#FF777777"
+                app:strokeWidth="1dp" />
+
+            <TextView
+                android:id="@+id/tv_review_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="@string/review_label"
+                android:textSize="16sp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview_revievs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
 
         </LinearLayout>
     </LinearLayout>

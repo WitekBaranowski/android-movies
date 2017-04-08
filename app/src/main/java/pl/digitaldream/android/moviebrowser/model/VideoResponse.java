@@ -1,4 +1,4 @@
-package pl.digitaldream.android.moviebrowser;
+package pl.digitaldream.android.moviebrowser.model;
 
 import java.util.List;
 
@@ -6,9 +6,9 @@ import java.util.List;
  * Created by wbaranowski on 26.03.2017.
  */
 
-public class MovieDbResponse {
+public class VideoResponse {
     private int page;
-    private List<Movie> results;
+    private List<Video> results;
 
     public int getPage() {
         return page;
@@ -18,11 +18,11 @@ public class MovieDbResponse {
         this.page = page;
     }
 
-    public List<Movie> getResults() {
+    public List<Video> getResults() {
         return results;
     }
 
-    public void setResults(List<Movie> results) {
+    public void setResults(List<Video> results) {
         this.results = results;
     }
 }

@@ -1,7 +1,6 @@
 package pl.digitaldream.android.moviebrowser;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,10 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import pl.digitaldream.android.moviebrowser.model.Movie;
 
 /**
  * Created by wbaranowski on 26.03.2017.
@@ -26,6 +25,7 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHol
     private final Context context;
 
     private final MovieAdapterOnClickHandler mClickHandler;
+
     /**
      * The interface that receives onClick messages.
      */
@@ -64,8 +64,13 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHol
         return movies.size();
     }
 
-    void setMovieData(List<Movie> movieData) {
-        this.movies = movieData;
+    void addMovies(List<Movie> movieData) {
+        this.movies.addAll(movieData);
+        notifyDataSetChanged();
+    }
+
+    void reset() {
+        this.movies.clear();
         notifyDataSetChanged();
     }
 
