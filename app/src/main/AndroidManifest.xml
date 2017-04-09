@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MovieActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,11 +21,15 @@
         <activity
             android:name=".MovieDetailsActivity"
             android:label="@string/details_name"
-            android:parentActivityName="pl.digitaldream.android.moviebrowser.MainActivity">
+            android:parentActivityName="pl.digitaldream.android.moviebrowser.MovieActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="pl.digitaldream.android.moviebrowser.MainActivity" />
+                android:value="pl.digitaldream.android.moviebrowser.MovieActivity" />
         </activity>
+        <provider
+            android:name="pl.digitaldream.android.moviebrowser.data.generated.MoviesProvider"
+            android:authorities="pl.digitaldream.android.moviebrowser.data.MoviesProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

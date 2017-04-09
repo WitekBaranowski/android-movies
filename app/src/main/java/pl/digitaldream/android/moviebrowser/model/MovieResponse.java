@@ -1,8 +1,8 @@
 package pl.digitaldream.android.moviebrowser.model;
 
-import java.util.List;
+import com.google.gson.annotations.SerializedName;
 
-import pl.digitaldream.android.moviebrowser.model.Movie;
+import java.util.List;
 
 /**
  * Created by wbaranowski on 26.03.2017.
@@ -11,7 +11,9 @@ import pl.digitaldream.android.moviebrowser.model.Movie;
 public class MovieResponse {
     private int page;
     private List<Movie> results;
+    @SerializedName("total_pages")
     private Integer totalPages;
+    @SerializedName("total_results")
     private Integer totalResults;
 
     public int getPage() {

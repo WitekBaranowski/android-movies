@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -18,9 +18,9 @@
             android:paddingBottom="20dp"
             android:paddingLeft="20dp"
             android:paddingTop="20dp"
-            tools:text="Title"
             android:textColor="@android:color/white"
-            android:textSize="45sp" />
+            android:textSize="45sp"
+            tools:text="Title" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,14 +49,15 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
+
                     <TextView
                         android:id="@+id/tv_release_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
                         android:padding="2dp"
-                        tools:text="Release date"
-                        android:textSize="20sp" />
+                        android:textSize="20sp"
+                        tools:text="Release date" />
 
                     <TextView
                         android:id="@+id/tv_user_rating"
@@ -64,8 +65,18 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
                         android:padding="2dp"
-                        tools:text="Rating"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        tools:text="Rating" />
+
+                    <ToggleButton
+                        android:id="@+id/tb_favorite"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:background="@android:drawable/btn_star"
+                        />
 
                 </LinearLayout>
 
@@ -76,16 +87,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"
-                tools:text="Overview"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                tools:text="Overview" />
 
-            <TextView
-                android:id="@+id/tv_video_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:text="@string/video_label"
-                android:textSize="12sp" />
 
             <com.synnapps.carouselview.CarouselView
                 android:id="@+id/cv_videos"
@@ -99,19 +103,12 @@
                 app:strokeColor="#FF777777"
                 app:strokeWidth="1dp" />
 
-            <TextView
-                android:id="@+id/tv_review_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:text="@string/review_label"
-                android:textSize="16sp" />
+
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview_revievs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="wrap_content" />
 
 
         </LinearLayout>

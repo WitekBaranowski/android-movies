@@ -1,5 +1,7 @@
 package pl.digitaldream.android.moviebrowser.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
@@ -10,7 +12,9 @@ public class ReviewResponse {
     private int id;
     private int page;
     private List<Review> results;
+    @SerializedName("total_pages")
     private Integer totalPages;
+    @SerializedName("total_results")
     private Integer totalResults;
 
     public int getId() {

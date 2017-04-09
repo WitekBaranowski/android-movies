@@ -9,5 +9,9 @@
     <string name="youtube_video_site">YouTube</string>
     <string name="video_label">Videos</string>
     <string name="review_label">Reviews</string>
+    <string name="action_favorites">Favorite movies</string>
+
+    <string name="movie_db_api_key" translatable="false"></string>
+
 
 </resources>

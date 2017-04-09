@@ -3,6 +3,8 @@ package pl.digitaldream.android.moviebrowser.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 /**
@@ -13,12 +15,24 @@ public class Movie implements Parcelable {
 
     public static final String MOVIE_DETAILS_DATA = "android.moviebrowser.intent.MovieDetails";
 
-    private String posterPath;
-    private String overview;
-    private Date releaseDate;
     private int id;
     private String title;
+    @SerializedName("poster_path")
+    private String posterPath;
+    private String overview;
+    @SerializedName("release_date")
+    private Date releaseDate;
+    @SerializedName("vote_average")
     private Double voteAverage;
+
+    public Movie(int id, String title, String posterPath, String overview, Date releaseDate, Double voteAverage) {
+        this.id = id;
+        this.title = title;
+        this.posterPath = posterPath;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+        this.voteAverage = voteAverage;
+    }
 
     protected Movie(Parcel in) {
         posterPath = in.readString();

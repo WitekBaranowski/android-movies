@@ -12,13 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.digitaldream.android.moviebrowser.model.Movie;
+import pl.digitaldream.android.moviebrowser.network.ImagesDownloader;
 
 /**
  * Created by wbaranowski on 26.03.2017.
  */
 
-class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
+class MovieAdapter extends RecyclerView.Adapter<MovieAdapterViewHolder> implements MovieProvider {
     private static final String TAG = MovieAdapter.class.getSimpleName();
+
 
     private List<Movie> movies = new ArrayList<>();
 
@@ -26,18 +28,10 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHol
 
     private final MovieAdapterOnClickHandler mClickHandler;
 
-    /**
-     * The interface that receives onClick messages.
-     */
-    public interface MovieAdapterOnClickHandler {
-        void onClick(Movie movie);
+    MovieAdapter(MovieActivity movieActivity) {
+        context = movieActivity.getApplicationContext();
+        mClickHandler = movieActivity;
     }
-
-    MovieAdapter(MainActivity mainActivity) {
-        context = mainActivity.getApplicationContext();
-        mClickHandler = mainActivity;
-    }
-
 
     @Override
     public MovieAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -48,15 +42,14 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHol
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
         Log.v(TAG, "Creating view holder");
-        return new MovieAdapterViewHolder(view);
+        return new MovieAdapterViewHolder(this, view, mClickHandler);
     }
 
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
         String imagePath = movies.get(position).getPosterPath();
-        ImageView target = movieAdapterViewHolder.mMovieImageView;
-        MoviesDownloader.getInstance()
-                .fetchImageFromMovieDb(context, imagePath, target);
+        ImageView target = movieAdapterViewHolder.getmMovieImageView();
+        ImagesDownloader.getInstance().fetchImageFromMovieDb(context, imagePath, target);
     }
 
     @Override
@@ -74,21 +67,8 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHol
         notifyDataSetChanged();
     }
 
-
-    class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        final ImageView mMovieImageView;
-
-        MovieAdapterViewHolder(View itemView) {
-            super(itemView);
-            mMovieImageView = (ImageView) itemView.findViewById(R.id.iv_movie_thumbnail);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            Log.d(TAG, "Click on: "+movies.get(getAdapterPosition()).getTitle());
-            mClickHandler.onClick(movies.get(getAdapterPosition()));
-        }
+    @Override
+    public Movie provideMovie(int adapterPosition) {
+        return movies.get(adapterPosition);
     }
 }
