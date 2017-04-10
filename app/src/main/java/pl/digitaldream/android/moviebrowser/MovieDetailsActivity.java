@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,6 +64,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements LoaderMan
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mPoster = (ImageView) findViewById(R.id.iv_movie_thumbnail) ;
         mTitle = (TextView) findViewById(R.id.tv_title);
@@ -232,5 +234,15 @@ public class MovieDetailsActivity extends AppCompatActivity implements LoaderMan
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

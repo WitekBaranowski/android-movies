@@ -20,11 +20,8 @@
         </activity>
         <activity
             android:name=".MovieDetailsActivity"
-            android:label="@string/details_name"
-            android:parentActivityName="pl.digitaldream.android.moviebrowser.MovieActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="pl.digitaldream.android.moviebrowser.MovieActivity" />
+            android:label="@string/details_name">
+
         </activity>
         <provider
             android:name="pl.digitaldream.android.moviebrowser.data.generated.MoviesProvider"

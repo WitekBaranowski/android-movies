@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -37,6 +38,7 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
 
     private static final String TAG = MovieActivity.class.getSimpleName();
     private static final int ID_FAV_MOVIES_LOADER = 69;
+    private static final String SAVED_LAYOUT_MANAGER = "SAVED_LAYOUT_MANAGER";
 
     private RecyclerView mRecyclerView;
 
@@ -50,8 +52,7 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
 
     private EndlessRecyclerViewScrollListener reviewsScrollListener;
 
-
-    private int mPosition = RecyclerView.NO_POSITION;
+    private Parcelable layoutManagerSavedState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +108,7 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
                     List<Movie> movies = response.body().getResults();
                     mMovieAdapter.addMovies(movies);
                     showMovieDataView();
+                    restoreLayoutManagerPosition();
                 } else {
                     Log.e(TAG, "Error response: " + response);
                     showErrorMessage();
@@ -175,6 +177,25 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        bundle.putParcelable(SAVED_LAYOUT_MANAGER, mRecyclerView.getLayoutManager().onSaveInstanceState());
+    }
+    @Override
+    public void onRestoreInstanceState(Bundle state) {
+        super.onRestoreInstanceState(state);
+        if (state != null) {
+            layoutManagerSavedState = state.getParcelable(SAVED_LAYOUT_MANAGER);
+        }
+    }
+    private void restoreLayoutManagerPosition() {
+        if (layoutManagerSavedState != null) {
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
+        }
+    }
+
+
     public void showMovieDataView() {
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -212,8 +233,7 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         hideLoader();
         mFavoriteMovieAdapter.swapCursor(data);
-        if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
-        mRecyclerView.smoothScrollToPosition(mPosition);
+        restoreLayoutManagerPosition();
     }
 
     @Override

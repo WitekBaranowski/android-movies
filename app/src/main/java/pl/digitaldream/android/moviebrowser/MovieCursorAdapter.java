@@ -44,7 +44,6 @@ public class MovieCursorAdapter extends CursorRecyclerViewAdapter<MovieAdapterVi
 
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder viewHolder, Cursor cursor) {
-        DatabaseUtils.dumpCursor(cursor);
         String imagePath = cursor.getString(cursor.getColumnIndex(FavMovieColumns.POSTER_PATH));
         ImageView target = viewHolder.getmMovieImageView();
         ImagesDownloader.getInstance().fetchImageFromMovieDb(mContext, imagePath, target);
