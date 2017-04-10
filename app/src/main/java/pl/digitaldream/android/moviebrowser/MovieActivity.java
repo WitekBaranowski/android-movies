@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import pl.digitaldream.android.moviebrowser.data.MovieBrowserPreferences;
 import pl.digitaldream.android.moviebrowser.data.MoviesProvider;
 import pl.digitaldream.android.moviebrowser.model.Movie;
 import pl.digitaldream.android.moviebrowser.model.MovieResponse;
@@ -49,7 +50,6 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
 
     private EndlessRecyclerViewScrollListener reviewsScrollListener;
 
-    private MovieOrder movieOrder = MovieOrder.POPULAR;
 
     private int mPosition = RecyclerView.NO_POSITION;
 
@@ -73,19 +73,25 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
         mMovieAdapter = new MovieAdapter(this);
         mFavoriteMovieAdapter = new MovieCursorAdapter(this, null, this);
 
-        mRecyclerView.setAdapter(mMovieAdapter);
-
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-
         reviewsScrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                fetchMovies(movieOrder, page + 1);
+                fetchMovies(MovieBrowserPreferences.getPrefOrder(MovieActivity.this), page + 1);
             }
         };
-        mRecyclerView.addOnScrollListener(reviewsScrollListener);
 
-        fetchMovies(movieOrder, 1);
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+
+        if(MovieOrder.FAVORITE.equals(MovieBrowserPreferences.getPrefOrder(MovieActivity.this))){
+            mRecyclerView.setAdapter(mFavoriteMovieAdapter);
+            getSupportLoaderManager().initLoader(ID_FAV_MOVIES_LOADER, null, this);
+        }else{
+            mRecyclerView.setAdapter(mMovieAdapter);
+            mRecyclerView.addOnScrollListener(reviewsScrollListener);
+            fetchMovies(MovieBrowserPreferences.getPrefOrder(MovieActivity.this), 1);
+        }
+
+
     }
 
     private void fetchMovies(MovieOrder order, int page) {
@@ -138,26 +144,29 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
         int id = item.getItemId();
 
         if (id == R.id.action_order_popular) {
+            MovieBrowserPreferences.setPrefOrder(MovieActivity.this, MovieOrder.POPULAR);
             mMovieAdapter.reset();
             mRecyclerView.setAdapter(mMovieAdapter);
             mRecyclerView.addOnScrollListener(reviewsScrollListener);
             reviewsScrollListener.resetState();
-            fetchMovies(MovieOrder.POPULAR, 1);
+            fetchMovies(MovieBrowserPreferences.getPrefOrder(MovieActivity.this), 1);
             return true;
         }
 
         if (id == R.id.action_order_top_rated) {
+            MovieBrowserPreferences.setPrefOrder(MovieActivity.this, MovieOrder.TOP_RATED);
             mMovieAdapter.reset();
             mRecyclerView.setAdapter(mMovieAdapter);
             mRecyclerView.addOnScrollListener(reviewsScrollListener);
             reviewsScrollListener.resetState();
-            fetchMovies(MovieOrder.TOP_RATED, 1);
+            fetchMovies(MovieBrowserPreferences.getPrefOrder(MovieActivity.this), 1);
             return true;
         }
         if (id == R.id.action_favorites) {
+            MovieBrowserPreferences.setPrefOrder(MovieActivity.this, MovieOrder.FAVORITE);
             mMovieAdapter.reset();
-            mRecyclerView.setAdapter(mFavoriteMovieAdapter);
             mRecyclerView.removeOnScrollListener(reviewsScrollListener);
+            mRecyclerView.setAdapter(mFavoriteMovieAdapter);
             reviewsScrollListener.resetState();
             getSupportLoaderManager().initLoader(ID_FAV_MOVIES_LOADER, null, this);
             return true;

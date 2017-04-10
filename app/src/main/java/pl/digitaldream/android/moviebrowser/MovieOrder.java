@@ -6,7 +6,8 @@ package pl.digitaldream.android.moviebrowser;
 
 public enum MovieOrder {
     POPULAR("popular"),
-    TOP_RATED("top_rated");
+    TOP_RATED("top_rated"),
+    FAVORITE(null);
 
     private String pathName;
 
