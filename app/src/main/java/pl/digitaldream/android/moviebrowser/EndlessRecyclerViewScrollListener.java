@@ -10,7 +10,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     // before loading more.
     private int visibleThreshold = 5;
     // The current offset index of data you have loaded
-    private int currentPage = 0;
+    private int currentPage;
     // The total number of items in the dataset after the last load
     private int previousTotalItemCount = 0;
     // True if we are still waiting for the last set of data to load.
@@ -22,17 +22,20 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
     public EndlessRecyclerViewScrollListener(LinearLayoutManager layoutManager) {
         this.mLayoutManager = layoutManager;
+        currentPage = 0;
     }
 
     public EndlessRecyclerViewScrollListener(GridLayoutManager layoutManager) {
         this.mLayoutManager = layoutManager;
         visibleThreshold = visibleThreshold * layoutManager.getSpanCount();
+        currentPage = 0;
     }
-
-    public EndlessRecyclerViewScrollListener(StaggeredGridLayoutManager layoutManager) {
+    public EndlessRecyclerViewScrollListener(GridLayoutManager layoutManager, int currentPage) {
         this.mLayoutManager = layoutManager;
         visibleThreshold = visibleThreshold * layoutManager.getSpanCount();
+        this.currentPage = currentPage;
     }
+
 
     public int getLastVisibleItem(int[] lastVisibleItemPositions) {
         int maxSize = 0;
@@ -103,4 +106,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     // Defines the process for actually loading more data based on page
     public abstract void onLoadMore(int page, int totalItemsCount, RecyclerView view);
 
+    public int getCurrentPage() {
+        return currentPage;
+    }
 }

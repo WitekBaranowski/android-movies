@@ -24,7 +24,7 @@
 
         </activity>
         <provider
-            android:name="pl.digitaldream.android.moviebrowser.data.generated.MoviesProvider"
+            android:name="pl.digitaldream.android.moviebrowser.data.MoviesProvider"
             android:authorities="pl.digitaldream.android.moviebrowser.data.MoviesProvider"
             android:exported="false"/>
     </application>

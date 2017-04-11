@@ -21,10 +21,11 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.digitaldream.android.moviebrowser.data.MovieBrowserPreferences;
-import pl.digitaldream.android.moviebrowser.data.MoviesProvider;
+import pl.digitaldream.android.moviebrowser.data.MoviesContract;
 import pl.digitaldream.android.moviebrowser.model.Movie;
 import pl.digitaldream.android.moviebrowser.model.MovieResponse;
 import pl.digitaldream.android.moviebrowser.network.MovieDbAPI;
@@ -39,6 +40,8 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
     private static final String TAG = MovieActivity.class.getSimpleName();
     private static final int ID_FAV_MOVIES_LOADER = 69;
     private static final String SAVED_LAYOUT_MANAGER = "SAVED_LAYOUT_MANAGER";
+    private static final String SAVED_MOVIES = "SAVED_MOVIES";
+    private static final String SAVED_START_PAGE = "SAVED_START_PAGE";
 
     private RecyclerView mRecyclerView;
 
@@ -74,9 +77,14 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
         mMovieAdapter = new MovieAdapter(this);
         mFavoriteMovieAdapter = new MovieCursorAdapter(this, null, this);
 
-        reviewsScrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+        int savedStartPage = 1;
+        if(savedInstanceState != null && savedInstanceState.containsKey(SAVED_START_PAGE)) {
+            savedStartPage = savedInstanceState.getInt(SAVED_START_PAGE);
+        }
+        reviewsScrollListener = new EndlessRecyclerViewScrollListener(layoutManager, savedStartPage) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Log.i(TAG, "Loading movies: page "+page+" total now: "+totalItemsCount);
                 fetchMovies(MovieBrowserPreferences.getPrefOrder(MovieActivity.this), page + 1);
             }
         };
@@ -89,7 +97,12 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
         }else{
             mRecyclerView.setAdapter(mMovieAdapter);
             mRecyclerView.addOnScrollListener(reviewsScrollListener);
-            fetchMovies(MovieBrowserPreferences.getPrefOrder(MovieActivity.this), 1);
+            if(savedInstanceState == null || !savedInstanceState.containsKey(SAVED_MOVIES)) {
+                fetchMovies(MovieBrowserPreferences.getPrefOrder(MovieActivity.this), 1);
+            }else{
+                mMovieAdapter.addMovies(savedInstanceState.<Movie>getParcelableArrayList(SAVED_MOVIES));
+            }
+
         }
 
 
@@ -108,7 +121,6 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
                     List<Movie> movies = response.body().getResults();
                     mMovieAdapter.addMovies(movies);
                     showMovieDataView();
-                    restoreLayoutManagerPosition();
                 } else {
                     Log.e(TAG, "Error response: " + response);
                     showErrorMessage();
@@ -165,11 +177,11 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
             return true;
         }
         if (id == R.id.action_favorites) {
-            MovieBrowserPreferences.setPrefOrder(MovieActivity.this, MovieOrder.FAVORITE);
-            mMovieAdapter.reset();
             mRecyclerView.removeOnScrollListener(reviewsScrollListener);
-            mRecyclerView.setAdapter(mFavoriteMovieAdapter);
             reviewsScrollListener.resetState();
+            mMovieAdapter.reset();
+            mRecyclerView.setAdapter(mFavoriteMovieAdapter);
+            MovieBrowserPreferences.setPrefOrder(MovieActivity.this, MovieOrder.FAVORITE);
             getSupportLoaderManager().initLoader(ID_FAV_MOVIES_LOADER, null, this);
             return true;
         }
@@ -180,6 +192,8 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
+        bundle.putParcelableArrayList(SAVED_MOVIES, mMovieAdapter.getMovies());
+        bundle.putInt(SAVED_START_PAGE, reviewsScrollListener.getCurrentPage());
         bundle.putParcelable(SAVED_LAYOUT_MANAGER, mRecyclerView.getLayoutManager().onSaveInstanceState());
     }
     @Override
@@ -221,7 +235,7 @@ public class MovieActivity extends AppCompatActivity implements MovieAdapterOnCl
 
             case ID_FAV_MOVIES_LOADER:
                 showLoader();
-                return new CursorLoader(this, MoviesProvider.FavMovies.CONTENT_URI,
+                return new CursorLoader(this, MoviesContract.FavMoviesEntry.CONTENT_URI,
                         null, null, null, null);
 
             default:

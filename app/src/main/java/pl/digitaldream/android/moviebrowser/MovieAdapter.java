@@ -1,6 +1,7 @@
 package pl.digitaldream.android.moviebrowser;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -70,5 +71,9 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapterViewHolder> implemen
     @Override
     public Movie provideMovie(int adapterPosition) {
         return movies.get(adapterPosition);
+    }
+
+    public ArrayList<? extends Parcelable> getMovies() {
+        return new ArrayList<>(movies);
     }
 }

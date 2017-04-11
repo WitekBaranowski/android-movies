@@ -27,7 +27,8 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.digitaldream.android.moviebrowser.data.FavMovieColumns;
+import pl.digitaldream.android.moviebrowser.data.MoviesContract;
+import pl.digitaldream.android.moviebrowser.data.MoviesContract.FavMoviesEntry;
 import pl.digitaldream.android.moviebrowser.data.MoviesProvider;
 import pl.digitaldream.android.moviebrowser.model.Movie;
 import pl.digitaldream.android.moviebrowser.model.ReviewResponse;
@@ -198,7 +199,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements LoaderMan
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if(ID_FAV_MOVIE_LOADER == id){
-            return new CursorLoader(this, MoviesProvider.FavMovies.withId(movie.getId()),
+            return new CursorLoader(this, MoviesContract.FavMoviesEntry.buildMoviesUriWithId(movie.getId()),
                     null, null, null, null);
         }
         throw new RuntimeException("Loader Not Implemented: " + id);
@@ -216,15 +217,15 @@ public class MovieDetailsActivity extends AppCompatActivity implements LoaderMan
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put(FavMovieColumns._ID, movie.getId());
-                    contentValues.put(FavMovieColumns.TITLE, movie.getTitle());
-                    contentValues.put(FavMovieColumns.OVERVIEW, movie.getOverview());
-                    contentValues.put(FavMovieColumns.POSTER_PATH, movie.getPosterPath());
-                    contentValues.put(FavMovieColumns.RELEASE_DATE, movie.getReleaseDate().getTime());
-                    contentValues.put(FavMovieColumns.VOTE_AVERAGE, movie.getVoteAverage());
-                    getContentResolver().insert(MoviesProvider.FavMovies.CONTENT_URI, contentValues);
+                    contentValues.put(FavMoviesEntry._ID, movie.getId());
+                    contentValues.put(FavMoviesEntry.COLUMN_TITLE, movie.getTitle());
+                    contentValues.put(FavMoviesEntry.COLUMN_OVERVIEW, movie.getOverview());
+                    contentValues.put(FavMoviesEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
+                    contentValues.put(FavMoviesEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate().getTime());
+                    contentValues.put(FavMoviesEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
+                    getContentResolver().insert(MoviesContract.FavMoviesEntry.CONTENT_URI, contentValues);
                 } else {
-                    getContentResolver().delete(MoviesProvider.FavMovies.withId(movie.getId()),
+                    getContentResolver().delete(MoviesContract.FavMoviesEntry.buildMoviesUriWithId(movie.getId()),
                             null, null);
                 }
             }
